@@ -3,3 +3,5 @@
 /lib/
 .bsb.lock
 .merlin
+src/app.js
+src/*.bs.js
