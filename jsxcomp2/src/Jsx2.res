@@ -1,11 +1,18 @@
 // testing JSX in ReScript, following sample from book
 
-module Welcome = {
+module Rect = {
   @react.component
-  let make = () => {
-      <div className="alert alert-primary">
-        <p className="h4">{React.string("Hello React!")}</p>
-      </div>
+  let make = (~x:int, ~y:int, ~w:int, ~h:int, ~c:string) => {
+    let style = ReactDOM.Style.make(
+      ~backgroundColor = c,
+      ~position = "absolute",
+      ~left = string_of_int(x) ++ "px",
+      ~top = string_of_int(y) ++ "px",
+      ~width = string_of_int(w) ++ "px",
+      ~height = string_of_int(h) ++ "px",
+      ()
+    )
+    <div style={style}></div>
   }
 }
 
@@ -14,7 +21,10 @@ let message = "React component page."
 let el = (
     <div>
       <h5 className="mb-4">{message->React.string}</h5>
-      <Welcome />
+      <div>
+        <Rect x=200 y=200 w=200 h=200 c="cyan" />
+        <Rect x=300 y=300 w=200 h=200 c="magenta" />
+      </div>
     </div>
 )
 
