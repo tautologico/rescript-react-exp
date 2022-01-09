@@ -1,0 +1,22 @@
+{
+  "name": "rescript-project-template",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "rescript",
+    "clean": "rescript clean -with-deps",
+    "start": "rescript build -w",
+    "bundle": "esbuild --bundle src/Jsx1.bs.js --outfile=src/app.js"
+  },
+  "keywords": [
+    "rescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@rescript/react": "^0.10.3",
+    "rescript": "*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.11"
+  }
+}
