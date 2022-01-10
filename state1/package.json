@@ -5,7 +5,7 @@
     "build": "rescript",
     "clean": "rescript clean -with-deps",
     "start": "rescript build -w",
-    "bundle": "esbuild --bundle src/Jsx2.bs.js --outfile=src/app.js",
+    "bundle": "esbuild --bundle src/State1.bs.js --outfile=src/app.js",
     "serve": "python3 -m http.server --directory src"
   },
   "keywords": [
