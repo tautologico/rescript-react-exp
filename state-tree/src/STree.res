@@ -30,6 +30,82 @@ let colorData = [
   }
 ]
 
+// The component FaStar from react-icons/fa
+module FaStar = {
+  @obj
+  external makeProps: (~color: string, ~key: 'key=?,
+                       ~onClick: ReactEvent.Mouse.t => unit, unit) => {"color": React.element} = ""
+  @module("react-icons/fa")
+  external make: React.component<{ "color": React.element }> = "FaStar"
+}
+
+
+let initArrayWithElement = (n, el) => {
+  let result = []
+  for _i in 1 to n {
+    Js.Array.push(el, result) |> ignore
+  }
+  result
+}
+
+module Star = {
+  @react.component
+  let make = (~selected, ~onSelect) => {
+      <FaStar color={if selected { "red" } else { "grey" }}
+              onClick={onSelect} />
+  }
+}
+
+let initStars = (total, sel) => {
+  let result = []
+  for i in 1 to total {
+    result
+      |> Js.Array.push(<Star selected={i <= sel} onSelect={x => ()} />)
+      |> ignore
+  }
+  result
+}
+
+module StarRating = {
+  @react.component
+  let make = (~selectedStars, ~totalStars=5) => {
+      <>
+      {initStars(totalStars, selectedStars) |> React.array}
+      </>
+  }
+}
+
+module Color = {
+  @react.component
+  let make = (~title, ~color, ~rating) => {
+    <section>
+      <h1>{React.string(title)}</h1>
+      <div style={ReactDOM.Style.make(~height="50px", ~backgroundColor=color, ())}></div>
+      <StarRating selectedStars={rating} />
+    </section>
+  }
+}
+
+module ColorList = {
+  @react.component
+  let make = (~colors) => {
+    if Js.Array.length(colors) == 0 {
+      <div>{React.string("No colors listed.")}</div>
+    } else {
+        <div>
+        {
+          colors
+          -> Js.Array2.map(color =>
+                <Color title={color.title}
+                       color={color.color}
+                       rating={color.rating} />)
+          -> React.array
+        }
+      </div>
+    }
+  }
+}
+
 module App = {
   @react.component
   let make = () => {
@@ -39,31 +115,12 @@ module App = {
   }
 }
 
-module ColorList = {
-  @react.component
-  let make = (~colors) => {
-    if Js.Array.length(colors) == 0 {
-      <div>No colors listed.</div>
-    } else {
-        <div>
-        {
-          Js.Array.map(color =>
-              <Color title={color.title}
-                     color={color.color}
-                     rating={color.rating} />)
-        }
-        </div>
-    }
-  }
-}
 
-module Color = {
-  @react.component
-  let make = (~title, ~color, ~rating) => {
-    <section>
-      <h1>{React.string(title)}</h1>
-      <div style={{ "height": 50, "backgroundColor": color }}></div>
-      // StarRating
-    </section>
-  }
+let el = (
+    <App />
+)
+
+switch (ReactDOM.querySelector("#root")) {
+    | Some(root) => ReactDOM.render(el, root)
+    | None => Js.log("ReactDOM.querySelector failed to find the root element")
 }
