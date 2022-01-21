@@ -39,6 +39,14 @@ module FaStar = {
   external make: React.component<{ "color": React.element }> = "FaStar"
 }
 
+module FaTrash = {
+  @obj
+  external makeProps: (unit) => unit = ""
+
+  @module("react-icons/fa")
+  external make: React.component<unit> = "FaTrash"
+}
+
 
 let initArrayWithElement = (n, el) => {
   let result = []
@@ -56,11 +64,11 @@ module Star = {
   }
 }
 
-let initStars = (total, sel) => {
+let initStars = (total, sel, onRate) => {
   let result = []
   for i in 1 to total {
     result
-      |> Js.Array.push(<Star selected={i <= sel} onSelect={x => ()} />)
+      |> Js.Array.push(<Star selected={i <= sel} onSelect={ _ => onRate(i) } />)
       |> ignore
   }
   result
@@ -68,27 +76,30 @@ let initStars = (total, sel) => {
 
 module StarRating = {
   @react.component
-  let make = (~selectedStars, ~totalStars=5) => {
+  let make = (~selectedStars, ~totalStars=5, ~onRate) => {
       <>
-      {initStars(totalStars, selectedStars) |> React.array}
+      {initStars(totalStars, selectedStars, onRate) |> React.array}
       </>
   }
 }
 
 module Color = {
   @react.component
-  let make = (~title, ~color, ~rating) => {
+  let make = (~id, ~title, ~color, ~rating, ~onRemove, ~onRate) => {
     <section>
       <h1>{React.string(title)}</h1>
+      <button onClick={_ => onRemove(id)}>
+        <FaTrash />
+      </button>
       <div style={ReactDOM.Style.make(~height="50px", ~backgroundColor=color, ())}></div>
-      <StarRating selectedStars={rating} />
+      <StarRating selectedStars={rating} onRate={rating => onRate(id, rating)}/>
     </section>
   }
 }
 
 module ColorList = {
   @react.component
-  let make = (~colors) => {
+  let make = (~colors, ~onRemoveColor, ~onRateColor) => {
     if Js.Array.length(colors) == 0 {
       <div>{React.string("No colors listed.")}</div>
     } else {
@@ -96,13 +107,24 @@ module ColorList = {
         {
           colors
           -> Js.Array2.map(color =>
-                <Color title={color.title}
-                       color={color.color}
-                       rating={color.rating} />)
+              <Color id={color.id}
+                     title={color.title}
+                     color={color.color}
+                     rating={color.rating}
+                     onRemove={onRemoveColor}
+                     onRate={onRateColor} />)
           -> React.array
         }
       </div>
     }
+  }
+}
+
+let changeColorRating = (color, id, newRating) => {
+  if color.id === id {
+    { id: color.id, title: color.title, color: color.color, rating: newRating }
+  } else {
+    color
   }
 }
 
@@ -111,7 +133,13 @@ module App = {
   let make = () => {
     let (colors, setColors) = React.useState(_ => colorData)
 
-    <ColorList colors={colors} />
+    <ColorList colors={colors}
+               onRemoveColor={id => {
+                 setColors(colors => colors->Js.Array2.filter(color => color.id !== id))
+               }}
+               onRateColor={(id, rating) => {
+                 setColors(colors => colors->Js.Array2.map(color => changeColorRating(color, id, rating)))
+               }}/>
   }
 }
 
