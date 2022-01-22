@@ -1,0 +1,25 @@
+{
+  "name": "color-hook",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "rescript",
+    "clean": "rescript clean -with-deps",
+    "start": "rescript build -w",
+    "bundle": "esbuild --bundle src/ClrHook.bs.js --outfile=src/app.js",
+    "serve": "python3 -m http.server --directory src"
+  },
+  "keywords": [
+    "rescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@rescript/react": "^0.10.3",
+    "react-icons": "^4.3.1",
+    "rescript": "*",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.11"
+  }
+}
